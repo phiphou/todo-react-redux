@@ -1,5 +1,9 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit'
 
+export const FILTER_ALL = 'FILTER_ALL'
+export const FILTER_COMPLETED = 'FILTER_COMPLETED'
+export const FILTER_UNCOMPLETED = 'FILTER_UNCOMPLETED'
+
 const todoSlice = createSlice({
   name: 'todo',
   initialState: [],
@@ -40,6 +44,44 @@ const todoSlice = createSlice({
   }
 })
 
+const filterSlice = createSlice({
+  name: 'filter',
+  initialState: FILTER_ALL,
+  reducers: {
+    updateFilter: (state, action) => {
+      state = action.payload
+      return state
+    }
+  }
+})
+
+const filteredTodosSlice = createSlice({
+  name: 'filteredTodos',
+  initialState: [],
+  reducers: {
+    initFilter: (state, action) => {
+      state = action.payload
+      return state
+    },
+    filter: (state, action) => {
+      switch (action.payload.mode) {
+        case FILTER_ALL:
+          state = action.payload.todos
+          return state
+          break
+        case FILTER_COMPLETED:
+          state = action.payload.todos.filter((todo) => todo.completed)
+          return state
+          break
+        case FILTER_UNCOMPLETED:
+          state = action.payload.todos.filter((todo) => !todo.completed)
+          return state
+          break
+      }
+    }
+  }
+})
+
 export const {
   init,
   addTodo,
@@ -49,8 +91,14 @@ export const {
   clearAll
 } = todoSlice.actions
 
+export const { updateFilter } = filterSlice.actions
+
+export const { filter, initFilter } = filteredTodosSlice.actions
+
 export const store = configureStore({
   reducer: {
-    todo: todoSlice.reducer
+    todo: todoSlice.reducer,
+    filter: filterSlice.reducer,
+    filteredTodos: filteredTodosSlice.reducer
   }
 })
