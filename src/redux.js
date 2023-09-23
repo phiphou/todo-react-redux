@@ -55,33 +55,6 @@ const filterSlice = createSlice({
   }
 })
 
-const filteredTodosSlice = createSlice({
-  name: 'filteredTodos',
-  initialState: [],
-  reducers: {
-    initFilter: (state, action) => {
-      state = action.payload
-      return state
-    },
-    filter: (state, action) => {
-      switch (action.payload.mode) {
-        case FILTER_ALL:
-          state = action.payload.todos
-          return state
-          break
-        case FILTER_COMPLETED:
-          state = action.payload.todos.filter((todo) => todo.completed)
-          return state
-          break
-        case FILTER_UNCOMPLETED:
-          state = action.payload.todos.filter((todo) => !todo.completed)
-          return state
-          break
-      }
-    }
-  }
-})
-
 export const {
   init,
   addTodo,
@@ -93,12 +66,9 @@ export const {
 
 export const { updateFilter } = filterSlice.actions
 
-export const { filter, initFilter } = filteredTodosSlice.actions
-
 export const store = configureStore({
   reducer: {
     todo: todoSlice.reducer,
-    filter: filterSlice.reducer,
-    filteredTodos: filteredTodosSlice.reducer
+    filter: filterSlice.reducer
   }
 })

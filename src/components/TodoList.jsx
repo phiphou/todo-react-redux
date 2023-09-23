@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { init, initFilter, filter } from '../redux'
+import {
+  init,
+  FILTER_ALL,
+  FILTER_COMPLETED,
+  FILTER_UNCOMPLETED
+} from '../redux'
 import Todo from './Todo'
 import TodoFilter from './TodoFilter'
 import TodoForm from './TodoForm'
@@ -8,8 +13,18 @@ import TodoForm from './TodoForm'
 const TodoList = () => {
   const dispatch = useDispatch()
   const todos = useSelector((state) => state.todo)
-  const filteredTodos = useSelector((state) => state.filteredTodos)
   const filterMode = useSelector((state) => state.filter)
+
+  const filteredTodos = todos.filter((todo) => {
+    switch (filterMode) {
+      case FILTER_ALL:
+        return true
+      case FILTER_COMPLETED:
+        return todo.completed
+      case FILTER_UNCOMPLETED:
+        return !todo.completed
+    }
+  })
 
   useEffect(() => {
     dispatch(init())
@@ -17,13 +32,7 @@ const TodoList = () => {
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos))
-    dispatch(initFilter(todos))
-    dispatch(filter({ mode: filterMode, todos: todos }))
   }, [todos])
-
-  useEffect(() => {
-    dispatch(filter({ mode: filterMode, todos: todos }))
-  }, [filterMode])
 
   return (
     <div className="container">
