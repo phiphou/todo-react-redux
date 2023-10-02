@@ -1,18 +1,17 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 export const FILTER_ALL = 'FILTER_ALL'
 export const FILTER_COMPLETED = 'FILTER_COMPLETED'
 export const FILTER_UNCOMPLETED = 'FILTER_UNCOMPLETED'
 
+const existingTodos = localStorage.getItem('todos')
+
 const todoSlice = createSlice({
   name: 'todo',
-  initialState: [],
+  initialState: existingTodos ? JSON.parse(existingTodos) : [],
   reducers: {
-    init: (state) => {
-      const existingTodos = localStorage.getItem('todos')
-      state = existingTodos ? JSON.parse(existingTodos) : []
-      return state
-    },
     addTodo: (state, action) => {
       const newTodo = {
         id: new Date().getTime(),
@@ -72,3 +71,29 @@ export const store = configureStore({
     filter: filterSlice.reducer
   }
 })
+
+export const UseTodos = () => {
+  const todos = useSelector((state) => state.todo)
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+  }, [todos])
+
+  const filterMode = useSelector((state) => state.filter)
+
+  const filteredTodos = todos.filter((todo) => {
+    switch (filterMode) {
+      case FILTER_ALL:
+        return true
+      case FILTER_COMPLETED:
+        return todo.completed
+      case FILTER_UNCOMPLETED:
+        return !todo.completed
+    }
+  })
+  return {
+    todos,
+    filterMode,
+    filteredTodos
+  }
+}
