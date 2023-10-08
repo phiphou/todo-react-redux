@@ -1,47 +1,32 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch } from 'react-redux'
 import { addTodo, clearAll, clearCompleted } from '../redux'
 
 const TodoForm = () => {
-  const [todo, setTodo] = useState('')
   const dispatch = useDispatch()
 
   const OnTodoAdd = (e) => {
     e.preventDefault()
-    dispatch(addTodo(todo))
-    setTodo('')
-  }
-
-  const onClearCompleted = (e) => {
-    e.preventDefault()
-    dispatch(clearCompleted())
-    setTodo('')
-  }
-
-  const onClearAll = (e) => {
-    e.preventDefault()
-    dispatch(clearAll())
-    setTodo('')
+    const form = e.target
+    const formData = new FormData(e.target)
+    const text = formData.get('todo')
+    if (text) {
+      dispatch(addTodo(formData.get('todo')))
+      form.reset()
+    }
   }
 
   return (
     <div>
       <form onSubmit={(e) => OnTodoAdd(e)}>
-        <input
-          type="text"
-          value={todo}
-          placeholder="Thing to be done?"
-          onInput={(e) => setTodo(e.target.value)}
-        />
-        <button type="submit" disabled={todo === ''}>
-          Add Todo
-        </button>
+        <input type="text" name="todo" placeholder="Thing to be done?" />
+        <button type="submit">Add Todo</button>
       </form>
       <div className="clearBtns">
-        <button className="clearBtn" onClick={(e) => onClearCompleted(e)}>
+        <button className="clearBtn" onClick={() => dispatch(clearCompleted())}>
           Clear completed
         </button>
-        <button className="clearBtn" onClick={(e) => onClearAll(e)}>
+        <button className="clearBtn" onClick={() => dispatch(clearAll())}>
           Clear all tasks
         </button>
       </div>
