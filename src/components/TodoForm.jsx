@@ -8,10 +8,9 @@ const TodoForm = () => {
   const OnTodoAdd = (e) => {
     e.preventDefault()
     const form = e.target
-    const formData = new FormData(e.target)
-    const text = formData.get('todo')
+    const text = new FormData(e.target).get('todo')
     if (text) {
-      dispatch(addTodo(formData.get('todo')))
+      dispatch(addTodo(text))
       form.reset()
     }
   }
